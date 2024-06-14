@@ -1,8 +1,7 @@
 FROM hub.siji.ci/library/python:3.7-alpine AS base
 LABEL maintainer="sijinhui <sijinhui@qq.com>"
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
-RUN apk update && apk add --no-cache git tzdata
-RUN apk update && apk add vim
+RUN apk update && apk add --no-cache git tzdata vim
 RUN apk add --no-cache coreutils
 RUN apk add --no-cache \
     gcc \
