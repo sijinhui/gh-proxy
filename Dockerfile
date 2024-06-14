@@ -25,4 +25,6 @@ ENV PYTHONPATH=/app
 
 EXPOSE 8000
 
-ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "3"]
+#ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "3"]
+ENTRYPOINT ["gunicorn", "-w", "3", "main:app"]
+#ENTRYPOINT ["python", "main.py"]

@@ -3,6 +3,8 @@ services:
   gh-proxy-py:
     container_name: gh-proxy-py
     network_mode: "host"
+#    ports:
+#      - "8000:8000"
     restart: always
     #image: hunsh/gh-proxy-py:latest
     build:
