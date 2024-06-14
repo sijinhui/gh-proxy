@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+  gh-proxy-py:
+    container_name: gh-proxy-py
+    network_mode: "host"
+    restart: always
+    #image: hunsh/gh-proxy-py:latest
+    build:
+      context: .
+      dockerfile: Dockerfile

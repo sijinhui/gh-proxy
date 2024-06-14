@@ -168,7 +168,8 @@ def proxy(u, allow_redirects=False):
         url = u + request.url.replace(request.base_url, '', 1)
         if url.startswith('https:/') and not url.startswith('https://'):
             url = 'https://' + url[7:]
-        r = requests.request(method=request.method, url=url, data=request.data, headers=r_headers, stream=True, allow_redirects=allow_redirects)
+        r = requests.request(method=request.method, url=url, data=request.data, headers=r_headers, stream=True,
+                             allow_redirects=allow_redirects)
         headers = dict(r.headers)
 
         if 'Content-length' in r.headers and int(r.headers['Content-length']) > size_limit:
@@ -189,6 +190,7 @@ def proxy(u, allow_redirects=False):
     except Exception as e:
         headers['content-type'] = 'text/html; charset=UTF-8'
         return Response('server error ' + str(e), status=500, headers=headers)
+
 
 app.debug = True
 if __name__ == '__main__':

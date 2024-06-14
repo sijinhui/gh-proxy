@@ -1,27 +1,29 @@
-FROM guysoft/uwsgi-nginx:python3.7
+FROM hub.siji.ci/library/python:3.7-alpine AS base
+LABEL maintainer="sijinhui <sijinhui@qq.com>"
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+RUN apk update && apk add --no-cache git tzdata
+RUN apk update && apk add vim
+RUN apk add --no-cache coreutils
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    openssl-dev \
+    linux-headers
+# 设置时区环境变量
+ENV TZ=Asia/Chongqing
+# 更新并安装时区工具
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-LABEL maintainer="hunshcn <hunsh.cn@gmail.com>"
-
-RUN pip install flask requests
-
+FROM base as run
 COPY ./app /app
 WORKDIR /app
+
+RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # Make /app/* available to be imported by Python globally to better support several use cases like Alembic migrations.
 ENV PYTHONPATH=/app
 
-# Move the base entrypoint to reuse it
-RUN mv /entrypoint.sh /uwsgi-nginx-entrypoint.sh
-# Copy the entrypoint that will generate Nginx additional configs
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+EXPOSE 8000
 
-ENTRYPOINT ["/entrypoint.sh"]
-
-# Run the start script provided by the parent image tiangolo/uwsgi-nginx.
-# It will check for an /app/prestart.sh script (e.g. for migrations)
-# And then will start Supervisor, which in turn will start Nginx and uWSGI
-
-EXPOSE 80
-
-CMD ["/start.sh"]
+ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "3"]
